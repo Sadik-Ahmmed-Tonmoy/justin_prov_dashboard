@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   User as UserIcon,
+  Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -58,6 +59,24 @@ export default function DashboardLayout({
 
   // Retrieve logged-in user profile from redux state
   const currentUser = useAppSelector((state) => state.auth.user);
+  const token = useAppSelector((state) => state.auth.access_token);
+
+  useEffect(() => {
+    if (!token || !currentUser || currentUser?.role !== "ADMIN") {
+      router.replace("/auth/login");
+    }
+  }, [currentUser, token, router]);
+
+  if (!token || !currentUser || currentUser?.role !== "ADMIN") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F9FBFC]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="animate-spin text-[#26AEC1] h-10 w-10" />
+          <p className="text-slate-500 text-sm font-medium">Checking authorization...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleLogout = async () => {
     Swal.fire({
