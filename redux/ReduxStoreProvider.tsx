@@ -10,7 +10,7 @@ export default function ReduxStoreProvider({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) { 
   // Initialize store ONCE using lazy initializer
   const [storeData] = useState(() => {
     const store: AppStore = makeStore();
